@@ -12,6 +12,9 @@ const Board = (props) => {
 
         newSocket.emit('joinRoom', roomName);
 
+        // Request current canvas state after joining the room
+        newSocket.emit('requestCanvasState', roomName);
+
         return () => {
             newSocket.disconnect();
         };
@@ -20,6 +23,7 @@ const Board = (props) => {
     useEffect(() => {
         if (socket) {
             socket.on('drawing', ({ x0, y0, x1, y1, color, size, tool }) => {
+                // console.log('Drawing', x0, y0, x1, y1, color, size, tool);
                 const canvas = canvasRef.current;
                 const ctx = canvas.getContext('2d');
                 if (ctx) {
@@ -53,12 +57,26 @@ const Board = (props) => {
                     };
                 }
             });
+
+            socket.on('currentCanvasState', (data) => {
+                if (data.roomName === roomName) {
+                    const image = new Image();
+                    image.src = data.image;
+
+                    const canvas = canvasRef.current;
+                    const ctx = canvas.getContext('2d');
+                    image.onload = () => {
+                        ctx.drawImage(image, 0, 0);
+                    };
+                }
+            });
         }
 
         return () => {
             if (socket) {
                 socket.off('drawing');
                 socket.off('canvasImage');
+                socket.off('currentCanvasState');
             }
         };
     }, [socket, roomName]);
@@ -130,8 +148,21 @@ const Board = (props) => {
     useEffect(() => {
         const handleWindowResize = () => {
             const canvas = canvasRef.current;
-            canvas.width = canvas.clientWidth; // Adjust canvas width based on its container
-            canvas.height = canvas.clientHeight; // Adjust canvas height based on its container
+            const ctx = canvas.getContext('2d');
+            
+            // Save the current canvas content
+            const savedImage = new Image();
+            savedImage.src = canvas.toDataURL();
+            
+            // Resize the canvas
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            // Redraw the saved content
+            savedImage.onload = () => {
+                ctx.drawImage(savedImage, 0, 0);
+            };
+
             console.log(canvas.width, canvas.height);
         };
 
