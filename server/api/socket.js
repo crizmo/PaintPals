@@ -17,12 +17,10 @@ const ioHandler = (server) => {
         });
 
         socket.on('drawing', (data) => {
-            console.log(`Received drawing event in room ${data.roomName}`);
             socket.to(data.roomName).emit('drawing', data);
         });
 
         socket.on('canvasImage', (data) => {
-            console.log(`Received canvasImage event in room ${data.roomName}`);
             io.to(data.roomName).emit('canvasImage', data);
         });
 

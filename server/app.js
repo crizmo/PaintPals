@@ -8,6 +8,11 @@ const server = http.createServer(app);
 // Socket.IO setup
 ioHandler(server);
 
+//make a default endpoint
+app.get('/', (req, res) => {
+    res.send('Server is running');
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
