@@ -1,7 +1,7 @@
 // App.jsx
 
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // Import HashRouter
 import './App.css';
 import RoomSetup from './component/RoomSetup';
 import CanvasDrawing from './component/CanvasDrawing';
