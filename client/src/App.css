@@ -24,8 +24,8 @@
 }
 
 .canvas {
-  width: 1500px; /* Set a fixed width */
-  height: 1000px; /* Set a fixed height */
+  width: 1200px; /* Set a fixed width */
+  height: 800px; /* Set a fixed height */
   border: 1px solid black; /* Optional: for better visibility of the canvas boundary */
 }
 
