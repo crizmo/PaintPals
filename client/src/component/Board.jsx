@@ -82,7 +82,7 @@ const Board = (props) => {
             const y0 = lastY;
             const x1 = e.offsetX;
             const y1 = e.offsetY;
-            
+
             if (ctx) {
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
@@ -128,25 +128,30 @@ const Board = (props) => {
     }, [brushColor, brushSize, socket, tool]);
 
     const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight]);
+    console.log(windowSize);
 
     useEffect(() => {
         const handleWindowResize = () => {
-            setWindowSize([window.innerWidth, window.innerHeight]);
+            // setWindowSize([window.innerWidth, window.innerHeight]);
+            const canvas = canvasRef.current;
+            canvas.width = canvas.clientWidth; // Adjust canvas width based on its container
+            canvas.height = canvas.clientHeight; // Ad
+            console.log(canvas.width, canvas.height);
         };
 
         window.addEventListener('resize', handleWindowResize);
 
         return () => {
             window.removeEventListener('resize', handleWindowResize);
+            handleWindowResize();
         };
     }, []);
 
     return (
         <canvas
+            className='canvas'
             ref={canvasRef}
-            width={windowSize[0] > 700 ? 700 : 300}
-            height={windowSize[1] > 400 ? 400 : 200}
-            style={{ backgroundColor: 'white', border: '1px solid black' }}
+            style={{ backgroundColor: 'white' }}
         />
     );
 };
