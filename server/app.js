@@ -20,20 +20,10 @@
 // });
 
 // app.js
-const express = require('express');
-const app = express();
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Routes
-app.get('/', (req, res) => {
-  res.send('Server is running');
-});
+const express = require("express"); 
+const app = express(); 
+app.get("/", (req, res) => { res.send("Express on Vercel"); });
+const PORT = process.env.PORT || 5000; 
+app.listen(PORT, () => { console.log(`Server is running on port ${PORT}`); });
 
 module.exports = app;
-
-// app.listen(5000, () => {
-//     console.log('Server running on port 5000');
-//     });
