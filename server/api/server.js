@@ -12,3 +12,8 @@ module.exports = (req, res) => {
     res.end('Not Found');
   }
 };
+
+server.listen(5000, () => {
+    console.log('Server running on port 5000');
+    }
+    );
