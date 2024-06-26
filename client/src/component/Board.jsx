@@ -7,7 +7,7 @@ const Board = (props) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io('https://co-draw.onrender.com');
+        const newSocket = io('http://localhost:5000');
         setSocket(newSocket);
 
         newSocket.emit('joinRoom', roomName);
@@ -127,23 +127,21 @@ const Board = (props) => {
         };
     }, [brushColor, brushSize, socket, tool]);
 
-    const [windowSize, setWindowSize] = useState([window.innerWidth, window.innerHeight]);
-    console.log(windowSize);
-
     useEffect(() => {
         const handleWindowResize = () => {
-            // setWindowSize([window.innerWidth, window.innerHeight]);
             const canvas = canvasRef.current;
             canvas.width = canvas.clientWidth; // Adjust canvas width based on its container
-            canvas.height = canvas.clientHeight; // Ad
+            canvas.height = canvas.clientHeight; // Adjust canvas height based on its container
             console.log(canvas.width, canvas.height);
         };
 
         window.addEventListener('resize', handleWindowResize);
 
+        // Initial resize to set canvas size correctly on first render
+        handleWindowResize();
+
         return () => {
             window.removeEventListener('resize', handleWindowResize);
-            handleWindowResize();
         };
     }, []);
 
