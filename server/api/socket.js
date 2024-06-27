@@ -62,6 +62,7 @@ const ioHandler = (server) => {
                     savedDrawings[roomName] = [];
                 }
                 savedDrawings[roomName].push(...rooms[roomName]);
+                console.log("saving drawing in room: ", roomName);
                 io.to(roomName).emit('drawingSaved', savedDrawings[roomName]);
             }
         });
