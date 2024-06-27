@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Brush, Delete, LineStyle, Rectangle, Circle, Save, CloudDownload } from '@mui/icons-material';
+import { Box, Button, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Brush, Delete, Save, CloudDownload } from '@mui/icons-material';
 import io from 'socket.io-client';
 import '../App.css';
 import Board from './Board';
 
 const CanvasDrawing = () => {
-  const { roomName } = useParams();
+  const { roomName, userName } = useParams();
+  console.log('roomName:', roomName, 'userName:', userName);
   const [brushColor, setBrushColor] = useState('black');
   const [brushSize, setBrushSize] = useState(5);
   const [tool, setTool] = useState('brush');
   const [socket, setSocket] = useState(null);
+  const [users, setUsers] = useState([]);
 
   const clearCanvas = () => {
     const canvas = document.querySelector('.canvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Emit clear drawing event to server
     if (socket) {
       socket.emit('clearDrawing', roomName);
@@ -26,9 +29,6 @@ const CanvasDrawing = () => {
   const tools = [
     { name: 'Brush', icon: <Brush />, action: () => setTool('brush') },
     { name: 'Eraser', icon: <Delete />, action: () => setTool('eraser') },
-    { name: 'Line', icon: <LineStyle />, action: () => setTool('line') },
-    { name: 'Rectangle', icon: <Rectangle />, action: () => setTool('rectangle') },
-    { name: 'Circle', icon: <Circle />, action: () => setTool('circle') },
   ];
 
   const saveDrawing = () => {
@@ -68,11 +68,21 @@ const CanvasDrawing = () => {
   };
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000');
+    const newSocket = io('https://co-draw.onrender.com');
     setSocket(newSocket);
 
-    newSocket.emit('joinRoom', roomName);
+    let mainname = userName;
+    if (!/^[a-zA-Z0-9]*$/.test(mainname)) {
+      mainname = 'Anonymous';
+    } else {
+      mainname = mainname.substring(0, 10);
+    }
+    newSocket.emit('joinRoom', roomName, mainname);
     newSocket.emit('requestCanvasState', roomName);
+
+    newSocket.on('usersUpdate', (users) => {
+      setUsers(users);
+    });
 
     return () => {
       newSocket.disconnect();
@@ -170,43 +180,53 @@ const CanvasDrawing = () => {
           {tools.map((toolItem, index) => (
             <button key={index} onClick={toolItem.action}>
               {toolItem.icon}
-              {toolItem.name}
+              {/* {toolItem.name} */}
             </button>
           ))}
-        </div>
-        <div className="tool-group">
-          <button onClick={saveDrawing}>
-            <Save />
-            Save
-          </button>
-        </div>
-        <div className="tool-group">
-          <button onClick={loadDrawing}>
-            <CloudDownload />
-            Load
-          </button>
-        </div>
-        <div className="tool-group">
-          <button onClick={clearCanvas}>
-            <Delete />
-            Clear
-          </button>
-        </div>
-        <div className="tool-group">
-          <button onClick={downloadDrawing}>
-            <CloudDownload />
-            Download
-          </button>
         </div>
       </div>
       <div className="main-content">
         <div className="sidebar">
           <h2>Users</h2>
           <ul>
-            <li>User 1</li>
-            <li>User 2</li>
-            <li>User 3</li>
+            {users.map((user, index) => (
+              <li key={index}>{user}</li>
+            ))}
           </ul>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            '& > *': {
+              m: 1,
+            },
+          
+          }}>
+            <div>
+              <button onClick={saveDrawing}>
+                <Save />
+                <Typography>Save Drawing</Typography>
+              </button>
+            </div>
+            <div>
+              <button onClick={loadDrawing}>
+                <CloudDownload />
+                <Typography>Load Drawing</Typography>
+              </button>
+            </div>
+            <div>
+              <button onClick={clearCanvas}>
+                <Delete />
+                <Typography>Clear Canvas</Typography>
+              </button>
+            </div>
+            <div>
+              <button onClick={downloadDrawing}>
+                <CloudDownload />
+                <Typography>Download Drawing</Typography>
+              </button>
+            </div>
+          </Box>
         </div>
         <div className="canvas-container">
           <Board

@@ -17,7 +17,7 @@ const App = () => {
       <div className="App">
         <Routes>
           <Route path="/" element={<RoomSetup name={name} setName={setName} roomName={roomName} setRoomName={setRoomName} password={password} setPassword={setPassword} />} />
-          <Route path="/room/:roomName" element={<CanvasDrawing />} />
+          <Route path="/room/:roomName/:userName" element={<CanvasDrawing />} />
         </Routes>
       </div>
     </Router>

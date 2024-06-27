@@ -15,7 +15,7 @@ const RoomSetup = ({
   const navigate = useNavigate();
 
   const handleJoinRoom = () => {
-    navigate(`/room/${roomName}?name=${name}`);
+    navigate(`/room/${roomName}/${name}`);
   };
 
   return (

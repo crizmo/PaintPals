@@ -10,13 +10,24 @@ const ioHandler = (server) => {
 
     const rooms = {}; // Store the current canvas state for each room
     const savedDrawings = {}; // Store the last saved drawing for each room
+    const users = {}; // Store users in each room
 
     io.on('connection', (socket) => {
         console.log('a user connected');
 
-        socket.on('joinRoom', (roomName) => {
+        socket.on('joinRoom', (roomName, userName) => {
             socket.join(roomName);
-            console.log(`User joined room: ${roomName}`);
+            socket.username = userName;
+
+            // Add user to the room
+            if (!users[roomName]) {
+                users[roomName] = [];
+            }
+            users[roomName].push(userName);
+            console.log(users[roomName]);
+
+            // Notify all users in the room about the updated user list
+            io.to(roomName).emit('usersUpdate', users[roomName]);
 
             // Send the current canvas state to the newly joined user
             if (rooms[roomName]) {
@@ -75,6 +86,14 @@ const ioHandler = (server) => {
 
         socket.on('disconnect', () => {
             console.log('user disconnected');
+
+            // Remove user from all rooms and update user lists
+            Object.keys(users).forEach(roomName => {
+                if (users[roomName].includes(socket.username)) {
+                    users[roomName] = users[roomName].filter(user => user !== socket.username);
+                    io.to(roomName).emit('usersUpdate', users[roomName]);
+                }
+            });
         });
     });
 };
