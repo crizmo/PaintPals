@@ -1,85 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import React, { useRef, useEffect } from 'react';
 
-const Board = (props) => {
-    const { brushColor, brushSize, roomName, tool } = props;
+const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
     const canvasRef = useRef(null);
-    const [socket, setSocket] = useState(null);
-
-    useEffect(() => {
-        const newSocket = io('https://co-draw.onrender.com');
-        setSocket(newSocket);
-
-        newSocket.emit('joinRoom', roomName);
-
-        // Request current canvas state after joining the room
-        newSocket.emit('requestCanvasState', roomName);
-
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [roomName]);
-
-    useEffect(() => {
-        if (socket) {
-            socket.on('drawing', ({ x0, y0, x1, y1, color, size, tool }) => {
-                // console.log('Drawing', x0, y0, x1, y1, color, size, tool);
-                const canvas = canvasRef.current;
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    if (tool === 'eraser') {
-                        ctx.globalCompositeOperation = 'destination-out';
-                        ctx.strokeStyle = 'rgba(0,0,0,1)';
-                    } else {
-                        ctx.globalCompositeOperation = 'source-over';
-                        ctx.strokeStyle = color;
-                    }
-                    ctx.lineWidth = size;
-                    ctx.beginPath();
-                    ctx.moveTo(x0, y0);
-                    ctx.lineTo(x1, y1);
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            });
-
-            socket.on('canvasImage', (data) => {
-                if (data.roomName === roomName) {
-                    const image = new Image();
-                    image.src = data.image;
-
-                    const canvas = canvasRef.current;
-                    const ctx = canvas.getContext('2d');
-                    image.onload = () => {
-                        ctx.drawImage(image, 0, 0);
-                    };
-                }
-            });
-
-            socket.on('currentCanvasState', (data) => {
-                if (data.roomName === roomName) {
-                    const image = new Image();
-                    image.src = data.image;
-
-                    const canvas = canvasRef.current;
-                    const ctx = canvas.getContext('2d');
-                    image.onload = () => {
-                        ctx.drawImage(image, 0, 0);
-                    };
-                }
-            });
-        }
-
-        return () => {
-            if (socket) {
-                socket.off('drawing');
-                socket.off('canvasImage');
-                socket.off('currentCanvasState');
-            }
-        };
-    }, [socket, roomName]);
 
     useEffect(() => {
         let isDrawing = false;
@@ -150,25 +72,19 @@ const Board = (props) => {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext('2d');
             
-            // Save the current canvas content
             const savedImage = new Image();
             savedImage.src = canvas.toDataURL();
             
-            // Resize the canvas
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
 
-            // Redraw the saved content
             savedImage.onload = () => {
                 ctx.drawImage(savedImage, 0, 0);
             };
-
-            console.log(canvas.width, canvas.height);
         };
 
         window.addEventListener('resize', handleWindowResize);
 
-        // Initial resize to set canvas size correctly on first render
         handleWindowResize();
 
         return () => {
