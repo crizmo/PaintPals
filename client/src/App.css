@@ -10,13 +10,77 @@ body {
   width: 100vw;
 }
 
-.toolbar {
+.topbar {
   display: flex;
   background-color: #333;
   color: white;
   padding: 10px;
   flex-shrink: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  height: 30px;
+  align-items: center;
+}
+
+.file {
+  position: relative; /* Make this the reference point for the dropdown */
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.file button {
+  padding: 8px 15px; /* Slightly larger padding */
+  border: none;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Show the dropdown on hover */
+.file:hover .file-options {
+  display: block;
+}
+
+.file-options {
+  display: none;
+  position: absolute;
+  top: 100%; /* Position below the button */
+  left: 0;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  margin-top: 5px; /* Adjust for a slight gap */
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for dropdown */
+  z-index: 1; /* Ensure it appears above other elements */
+}
+
+.file-options button {
+  display: block;
+  margin: 5px 0;
+  width: 100%; /* Full width for a block look */
+  padding: 8px; /* Uniform padding */
+  background-color: #555;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 4px;
+}
+
+.file-options button:hover {
+  background-color: #777;
+}
+
+.toolbar {
+  display: flex;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  align-items: center;
 }
 
 .tool-group {
@@ -50,6 +114,32 @@ body {
   background-color: #777;
 }
 
+.brush-size {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.tools {
+  display: flex;
+  gap: 5px;
+}
+
+.tools button {
+  padding: 10px;
+  border: none;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 4px;
+  font-size: 0.8em; /* Make the button smaller */
+}
+
+.color-picker {
+  margin-left: auto;
+}
+
 .main-content {
   display: flex;
   flex-grow: 1;
@@ -58,7 +148,7 @@ body {
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: 150px;
   background-color: #444;
   color: white;
   padding: 20px;
@@ -92,6 +182,5 @@ body {
   width: 100%;
   height: 100%;
   background-color: white;
-  /* border: 1px solid #ccc; */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
 }

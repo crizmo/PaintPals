@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // Import HashRouter
 import './App.css';
-import RoomSetup from './component/RoomSetup';
-import CanvasDrawing from './component/CanvasDrawing';
+import RoomSetup from './pages/RoomSetup';
+import CanvasDrawing from './pages/CanvasDrawing';
 
 const App = () => {
 

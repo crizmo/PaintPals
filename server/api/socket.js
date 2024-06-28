@@ -77,12 +77,23 @@ const ioHandler = (server) => {
             }
         });
 
+        // to clear saved drawing
+        socket.on('clearSavedDrawing', (roomName) => {
+            // Clear the saved drawing state
+            if (savedDrawings[roomName]) {
+                savedDrawings[roomName] = [];
+                delete savedDrawings[roomName];
+                io.to(roomName).emit('clearSavedDrawing');
+            }
+        });
+
         socket.on('clearDrawing', (roomName) => {
             // Clear the current drawing state
             if (rooms[roomName]) {
                 rooms[roomName] = [];
                 io.to(roomName).emit('clearDrawing');
             }
+            console.log("clearing drawing in room: ", roomName);
         });
 
         socket.on('disconnect', () => {
