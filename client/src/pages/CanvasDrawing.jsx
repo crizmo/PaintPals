@@ -31,7 +31,7 @@ const CanvasDrawing = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('https://co-draw.onrender.com');
+    const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
     let mainname = userName;
@@ -165,7 +165,15 @@ const CanvasDrawing = () => {
         setTool={setTool}
       />
       <div className="main-content">
-        <SideBar users={users} />
+        <SideBar 
+        users={users}
+        tools={tools}
+        brushSize={brushSize}
+        setBrushSize={setBrushSize}
+        brushColor={brushColor}
+        setBrushColor={setBrushColor}
+        setTool={setTool}
+        />
         <div className="canvas-container">
           <Board
             roomName={roomName}

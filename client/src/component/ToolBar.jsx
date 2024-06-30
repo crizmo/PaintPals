@@ -1,30 +1,25 @@
 import React from 'react';
-import ToolButton from './ToolButton';
+import { Box, Input } from '@mui/material';
 
-const ToolBar = ({ tools, brushSize, setBrushSize, brushColor, setBrushColor, setTool }) => {
+const ToolBar = ({ brushColor, setBrushColor }) => {
   return (
-    <div className="toolbar">
-      <div className="tools">
-        {tools.map((toolItem, index) => (
-          <ToolButton key={index} toolItem={toolItem} setTool={setTool} />
-        ))}
-      </div>
-      <div className="tool-group brush-size">
-        <span>Size:</span>
-        <input
-          type="range"
-          min="1"
-          max="100"
-          value={brushSize}
-          onChange={(e) => setBrushSize(Number(e.target.value))}
+    <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#3c3c3c', p: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+        <span sx={{ mr: 2, color: '#ccc' }}>Color:</span>
+        <Input
+          type="color"
+          value={brushColor}
+          onChange={(e) => setBrushColor(e.target.value)}
+          sx={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'white',
+            borderRadius: '4px',
+            border: 'none'
+          }}
         />
-        <span>{brushSize}</span>
-      </div>
-      <div className="tool-group color-picker">
-        <span>Color:</span>
-        <input type="color" value={brushColor} onChange={(e) => setBrushColor(e.target.value)} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
