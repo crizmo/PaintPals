@@ -1,15 +1,16 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 
-const ToolButton = ({ toolItem, setTool }) => {
+const ToolButton = ({ toolItem, setTool, isActive }) => {
   return (
     <IconButton
       onClick={() => setTool(toolItem.action)}
       sx={{
         color: 'white',
-        backgroundColor: 'transparent',
+        backgroundColor: isActive ? '#1f1f1f' : 'transparent',
+        borderRadius: '4px',
         '&:hover': { 
-          backgroundColor: '#555',
+          backgroundColor: isActive ? '#1f1f1f' : '#333',
           color: 'white',
           borderRadius: '4px'
          }

@@ -155,6 +155,7 @@ const CanvasDrawing = () => {
         clearSavedDrawing={() => clearSavedDrawing(socket, roomName)}
         clearCanvas={() => clearCanvas(socket, roomName)}
         downloadDrawing={downloadDrawing}
+        users={users}
       />
       <ToolBar
         tools={tools}

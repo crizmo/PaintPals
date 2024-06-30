@@ -27,7 +27,7 @@ const BrushSizeControl = ({ brushSize, setBrushSize }) => {
       }}
     >
       <Typography variant="body2" sx={{ color: '#ccc', mr: 1 }}>
-        Size:
+        Brush Size
       </Typography>
       <InputBase
         value={brushSize}
@@ -42,7 +42,7 @@ const BrushSizeControl = ({ brushSize, setBrushSize }) => {
           'aria-labelledby': 'brush-size-input',
         }}
         sx={{
-          width: '60px',
+          width: '50%',
           color: '#fff',
           backgroundColor: '#333',
           padding: '2px 4px',
