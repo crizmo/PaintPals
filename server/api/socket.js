@@ -11,6 +11,7 @@ const ioHandler = (server) => {
     const rooms = {}; // Store the current canvas state for each room
     const savedDrawings = {}; // Store the last saved drawing for each room
     const users = {}; // Store users in each room
+    const drawingHistory = {}; // Store the drawing history for undo functionality
 
     io.on('connection', (socket) => {
         console.log('a user connected');
@@ -53,6 +54,26 @@ const ioHandler = (server) => {
                 rooms[roomName] = [];
             }
             rooms[roomName].push(drawingData);
+
+            // Update drawing history for undo functionality
+            if (!drawingHistory[roomName]) {
+                drawingHistory[roomName] = [];
+            }
+            drawingHistory[roomName].push(drawingData);
+        });
+
+        socket.on('undoDrawing', (roomName) => {
+            // console.log("undo drawing in room: ", roomName);
+            // Perform undo action
+            if (drawingHistory[roomName]?.length > 0) {
+                drawingHistory[roomName].pop(); // Remove the last drawing action
+
+                // Update current drawing state to reflect undo
+                rooms[roomName] = [...drawingHistory[roomName]];
+
+                // Broadcast updated drawing state to all users in the room
+                io.to(roomName).emit('loadDrawing', rooms[roomName]);
+            }
         });
 
         socket.on('saveDrawing', (roomName) => {

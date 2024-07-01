@@ -18,8 +18,8 @@ import {
   Colorize,
   TextFields,
   ZoomIn,
+  Undo // Add Undo icon from MUI
 } from '@mui/icons-material';
-
 
 const CanvasDrawing = () => {
   const { roomName, userName } = useParams();
@@ -118,6 +118,30 @@ const CanvasDrawing = () => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       });
+
+      socket.on('undoDrawing', (data) => {
+        console.log('Undo drawing:', data);
+        const canvas = document.querySelector('.canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        data.forEach(({ x0, y0, x1, y1, color, size, tool }) => {
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          if (tool === 'eraser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.strokeStyle = 'rgba(0,0,0,1)';
+          } else {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = color;
+          }
+          ctx.lineWidth = size;
+          ctx.beginPath();
+          ctx.moveTo(x0, y0);
+          ctx.lineTo(x1, y1);
+          ctx.stroke();
+          ctx.closePath();
+        });
+      });
     }
 
     return () => {
@@ -127,6 +151,7 @@ const CanvasDrawing = () => {
         socket.off('loadDrawing');
         socket.off('clearDrawing');
         socket.off('clearSavedDrawing');
+        socket.off('undoDrawing');
       }
     };
   }, [socket, roomName]);
@@ -146,6 +171,12 @@ const CanvasDrawing = () => {
       window.removeEventListener('wheel', handleScroll);
     };
   }, [tool]);
+
+  const undoDrawing = () => {
+    if (socket) {
+      socket.emit('undoDrawing', roomName);
+    }
+  };
 
   return (
     <div className="App">
@@ -167,13 +198,15 @@ const CanvasDrawing = () => {
       />
       <div className="main-content">
         <SideBar 
-        users={users}
-        tools={tools}
-        brushSize={brushSize}
-        setBrushSize={setBrushSize}
-        brushColor={brushColor}
-        setBrushColor={setBrushColor}
-        setTool={setTool}
+          users={users}
+          tools={tools}
+          brushSize={brushSize}
+          setBrushSize={setBrushSize}
+          brushColor={brushColor}
+          setBrushColor={setBrushColor}
+          setTool={setTool}
+
+          undoDrawing={undoDrawing}
         />
         <div className="canvas-container">
           <Board
@@ -198,6 +231,7 @@ const tools = [
   { name: 'Color Picker', icon: <Colorize sx={{ fontSize: 20 }} />, action: 'color-picker' },
   { name: 'Text', icon: <TextFields sx={{ fontSize: 20 }} />, action: 'text' },
   { name: 'Zoom', icon: <ZoomIn sx={{ fontSize: 20 }} />, action: 'zoom' },
+  { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' }, // Add Undo tool
 ];
 
 const saveDrawing = (socket, roomName) => {
@@ -228,7 +262,6 @@ const clearCanvas = (socket, roomName) => {
     socket.emit('clearDrawing', roomName);
   }
 };
-
 
 const downloadDrawing = () => {
   const canvas = document.querySelector('.canvas');
