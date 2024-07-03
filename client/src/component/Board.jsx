@@ -1,29 +1,33 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
     const canvasRef = useRef(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const [savedImage, setSavedImage] = useState(null);
 
     useEffect(() => {
-        let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
 
         const startDrawing = (e) => {
-            isDrawing = true;
-            [lastX, lastY] = [e.offsetX, e.offsetY];
+            setIsDrawing(true);
+            setStartX(e.offsetX);
+            setStartY(e.offsetY);
+
+            if (tool === 'line' || tool === 'rectangle') {
+                setSavedImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            }
         };
 
         const draw = (e) => {
             if (!isDrawing) return;
 
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            const x0 = lastX;
-            const y0 = lastY;
             const x1 = e.offsetX;
             const y1 = e.offsetY;
 
-            if (ctx) {
+            if (tool === 'brush' || tool === 'eraser') {
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 if (tool === 'eraser') {
@@ -35,24 +39,43 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
                 }
                 ctx.lineWidth = brushSize;
                 ctx.beginPath();
-                ctx.moveTo(x0, y0);
+                ctx.moveTo(startX, startY);
                 ctx.lineTo(x1, y1);
                 ctx.stroke();
                 ctx.closePath();
-            }
 
-            [lastX, lastY] = [x1, y1];
+                setStartX(x1);
+                setStartY(y1);
 
-            if (socket) {
-                socket.emit('drawing', { x0, y0, x1, y1, color: brushColor, size: brushSize, tool, roomName });
+                if (socket) {
+                    socket.emit('drawing', { x0: startX, y0: startY, x1, y1, color: brushColor, size: brushSize, tool, roomName });
+                }
+            } else if (tool === 'line') {
+                ctx.putImageData(savedImage, 0, 0);
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(x1, y1);
+                ctx.stroke();
+                ctx.closePath();
+            } else if (tool === 'rectangle') {
+                ctx.putImageData(savedImage, 0, 0);
+                const width = x1 - startX;
+                const height = y1 - startY;
+                ctx.strokeRect(startX, startY, width, height);
             }
         };
 
-        const endDrawing = () => {
-            isDrawing = false;
-        };
+        const endDrawing = (e) => {
+            if (!isDrawing) return;
+            setIsDrawing(false);
 
-        const canvas = canvasRef.current;
+            const x1 = e.offsetX;
+            const y1 = e.offsetY;
+
+            if ((tool === 'line' || tool === 'rectangle') && socket) {
+                socket.emit('drawing', { x0: startX, y0: startY, x1, y1, color: brushColor, size: brushSize, tool, roomName });
+            }
+        };
 
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
@@ -65,7 +88,7 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
             canvas.removeEventListener('mouseup', endDrawing);
             canvas.removeEventListener('mouseout', endDrawing);
         };
-    }, [brushColor, brushSize, socket, tool]);
+    }, [brushColor, brushSize, socket, tool, roomName, isDrawing, startX, startY, savedImage]);
 
     useEffect(() => {
         const handleWindowResize = () => {

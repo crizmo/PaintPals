@@ -18,7 +18,9 @@ import {
   Colorize,
   TextFields,
   ZoomIn,
-  Undo // Add Undo icon from MUI
+  Undo,
+  LinearScaleOutlined as Line,
+  RectangleOutlined as Rectangle,
 } from '@mui/icons-material';
 
 const CanvasDrawing = () => {
@@ -50,7 +52,7 @@ const CanvasDrawing = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, [roomName]);
+  }, [roomName, userName]);
 
   useEffect(() => {
     if (socket) {
@@ -60,6 +62,8 @@ const CanvasDrawing = () => {
         if (ctx) {
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
+          ctx.lineWidth = size;
+
           if (tool === 'eraser') {
             ctx.globalCompositeOperation = 'destination-out';
             ctx.strokeStyle = 'rgba(0,0,0,1)';
@@ -67,12 +71,24 @@ const CanvasDrawing = () => {
             ctx.globalCompositeOperation = 'source-over';
             ctx.strokeStyle = color;
           }
-          ctx.lineWidth = size;
-          ctx.beginPath();
-          ctx.moveTo(x0, y0);
-          ctx.lineTo(x1, y1);
-          ctx.stroke();
-          ctx.closePath();
+
+          if (tool === 'brush' || tool === 'eraser') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'line') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'rectangle') {
+            const width = x1 - x0;
+            const height = y1 - y0;
+            ctx.strokeRect(x0, y0, width, height);
+          }
         }
       });
 
@@ -88,6 +104,8 @@ const CanvasDrawing = () => {
         data.forEach(({ x0, y0, x1, y1, color, size, tool }) => {
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
+          ctx.lineWidth = size;
+
           if (tool === 'eraser') {
             ctx.globalCompositeOperation = 'destination-out';
             ctx.strokeStyle = 'rgba(0,0,0,1)';
@@ -95,12 +113,24 @@ const CanvasDrawing = () => {
             ctx.globalCompositeOperation = 'source-over';
             ctx.strokeStyle = color;
           }
-          ctx.lineWidth = size;
-          ctx.beginPath();
-          ctx.moveTo(x0, y0);
-          ctx.lineTo(x1, y1);
-          ctx.stroke();
-          ctx.closePath();
+
+          if (tool === 'brush' || tool === 'eraser') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'line') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'rectangle') {
+            const width = x1 - x0;
+            const height = y1 - y0;
+            ctx.strokeRect(x0, y0, width, height);
+          }
         });
       });
 
@@ -127,6 +157,8 @@ const CanvasDrawing = () => {
         data.forEach(({ x0, y0, x1, y1, color, size, tool }) => {
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
+          ctx.lineWidth = size;
+
           if (tool === 'eraser') {
             ctx.globalCompositeOperation = 'destination-out';
             ctx.strokeStyle = 'rgba(0,0,0,1)';
@@ -134,12 +166,24 @@ const CanvasDrawing = () => {
             ctx.globalCompositeOperation = 'source-over';
             ctx.strokeStyle = color;
           }
-          ctx.lineWidth = size;
-          ctx.beginPath();
-          ctx.moveTo(x0, y0);
-          ctx.lineTo(x1, y1);
-          ctx.stroke();
-          ctx.closePath();
+
+          if (tool === 'brush' || tool === 'eraser') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'line') {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.closePath();
+          } else if (tool === 'rectangle') {
+            const width = x1 - x0;
+            const height = y1 - y0;
+            ctx.strokeRect(x0, y0, width, height);
+          }
         });
       });
     }
@@ -227,11 +271,13 @@ export default CanvasDrawing;
 const tools = [
   { name: 'Brush', icon: <Brush sx={{ fontSize: 20 }} />, action: 'brush' },
   { name: 'Eraser', icon: <Eraser sx={{ fontSize: 20 }} />, action: 'eraser' },
+  { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' }, 
   { name: 'Fill', icon: <Fill sx={{ fontSize: 20 }} />, action: 'fill' },
   { name: 'Color Picker', icon: <Colorize sx={{ fontSize: 20 }} />, action: 'color-picker' },
   { name: 'Text', icon: <TextFields sx={{ fontSize: 20 }} />, action: 'text' },
   { name: 'Zoom', icon: <ZoomIn sx={{ fontSize: 20 }} />, action: 'zoom' },
-  { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' }, // Add Undo tool
+  { name: 'Line', icon: <Line sx={{ fontSize: 20 }} />, action: 'line' },
+  { name: 'Rectangle', icon: <Rectangle sx={{ fontSize: 20 }} />, action: 'rectangle' },
 ];
 
 const saveDrawing = (socket, roomName) => {

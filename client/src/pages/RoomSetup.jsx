@@ -11,15 +11,26 @@ const RoomSetup = ({ name, setName, roomName, setRoomName, password, setPassword
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="md"
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
+        textAlign: 'center',
+        padding: 2,
       }}
     >
+      <Typography variant="h2" gutterBottom>
+        Welcome to CoDraw!
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        A collaborative, multiplayer drawing application inspired by MS Paint.
+      </Typography>
+      <Typography variant="body1" sx={{ my: 2 }}>
+        Create or join a room to start drawing with your friends in real-time. You can save your drawings, load previous sessions, and download your creations as images. Enjoy a variety of tools including different brush sizes, colors, and more!
+      </Typography>
       <Paper
         elevation={3}
         sx={{
@@ -27,6 +38,7 @@ const RoomSetup = ({ name, setName, roomName, setRoomName, password, setPassword
           width: '100%',
           maxWidth: '400px',
           textAlign: 'center',
+          mt: 4,
         }}
       >
         <Typography variant="h4" gutterBottom>

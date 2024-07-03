@@ -5,7 +5,8 @@ const ToolBar = ({ brushColor, setBrushColor }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: '#3c3c3c', p: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
-        <span sx={{ mr: 2, color: '#ccc' }}>Color:</span>
+        <span sx={{ mr: 2, color: '#ccc' }}>Color :</span>
+        <Box sx={{ width: '8px' }} />
         <Input
           type="color"
           value={brushColor}
