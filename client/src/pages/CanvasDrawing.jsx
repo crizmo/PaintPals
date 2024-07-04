@@ -21,6 +21,7 @@ import {
   Undo,
   LinearScaleOutlined as Line,
   RectangleOutlined as Rectangle,
+  CircleOutlined as Circle,
 } from '@mui/icons-material';
 
 const CanvasDrawing = () => {
@@ -88,6 +89,12 @@ const CanvasDrawing = () => {
             const width = x1 - x0;
             const height = y1 - y0;
             ctx.strokeRect(x0, y0, width, height);
+          } else if (tool === 'circle') {
+            const radius = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
+            ctx.beginPath();
+            ctx.arc(x0, y0, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.closePath();
           }
         }
       });
@@ -130,6 +137,12 @@ const CanvasDrawing = () => {
             const width = x1 - x0;
             const height = y1 - y0;
             ctx.strokeRect(x0, y0, width, height);
+          } else if (tool === 'circle') {
+            const radius = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
+            ctx.beginPath();
+            ctx.arc(x0, y0, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.closePath();
           }
         });
       });
@@ -183,6 +196,12 @@ const CanvasDrawing = () => {
             const width = x1 - x0;
             const height = y1 - y0;
             ctx.strokeRect(x0, y0, width, height);
+          } else if (tool === 'circle') {
+            const radius = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
+            ctx.beginPath();
+            ctx.arc(x0, y0, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.closePath();
           }
         });
       });
@@ -273,11 +292,12 @@ const tools = [
   { name: 'Eraser', icon: <Eraser sx={{ fontSize: 20 }} />, action: 'eraser' },
   { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' }, 
   { name: 'Fill', icon: <Fill sx={{ fontSize: 20 }} />, action: 'fill' },
+  { name: 'Line', icon: <Line sx={{ fontSize: 20 }} />, action: 'line' },
+  { name: 'Rectangle', icon: <Rectangle sx={{ fontSize: 20 }} />, action: 'rectangle' },
+  { name: 'Circle', icon: <Circle sx={{ fontSize: 20 }} />, action: 'circle' },
   { name: 'Color Picker', icon: <Colorize sx={{ fontSize: 20 }} />, action: 'color-picker' },
   { name: 'Text', icon: <TextFields sx={{ fontSize: 20 }} />, action: 'text' },
   { name: 'Zoom', icon: <ZoomIn sx={{ fontSize: 20 }} />, action: 'zoom' },
-  { name: 'Line', icon: <Line sx={{ fontSize: 20 }} />, action: 'line' },
-  { name: 'Rectangle', icon: <Rectangle sx={{ fontSize: 20 }} />, action: 'rectangle' },
 ];
 
 const saveDrawing = (socket, roomName) => {

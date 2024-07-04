@@ -16,7 +16,7 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
             setStartX(e.offsetX);
             setStartY(e.offsetY);
 
-            if (tool === 'line' || tool === 'rectangle') {
+            if (tool === 'line' || tool === 'rectangle' || tool === 'circle') {
                 setSavedImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
             }
         };
@@ -52,6 +52,7 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
                 }
             } else if (tool === 'line') {
                 ctx.putImageData(savedImage, 0, 0);
+                ctx.lineWidth = brushSize;
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(x1, y1);
@@ -59,9 +60,18 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
                 ctx.closePath();
             } else if (tool === 'rectangle') {
                 ctx.putImageData(savedImage, 0, 0);
+                ctx.lineWidth = brushSize;
                 const width = x1 - startX;
                 const height = y1 - startY;
                 ctx.strokeRect(startX, startY, width, height);
+            } else if (tool === 'circle') {
+                ctx.putImageData(savedImage, 0, 0);
+                ctx.lineWidth = brushSize;
+                const radius = Math.sqrt(Math.pow(x1 - startX, 2) + Math.pow(y1 - startY, 2));
+                ctx.beginPath();
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.closePath();
             }
         };
 
@@ -72,7 +82,7 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
             const x1 = e.offsetX;
             const y1 = e.offsetY;
 
-            if ((tool === 'line' || tool === 'rectangle') && socket) {
+            if (( tool === 'line' || tool === 'rectangle' || tool === 'circle') && socket) {
                 socket.emit('drawing', { x0: startX, y0: startY, x1, y1, color: brushColor, size: brushSize, tool, roomName });
             }
         };
