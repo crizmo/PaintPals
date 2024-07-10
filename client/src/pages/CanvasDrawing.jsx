@@ -34,7 +34,7 @@ const CanvasDrawing = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('https://co-draw.onrender.com');
+    const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
     let mainname = userName;
@@ -241,6 +241,25 @@ const CanvasDrawing = () => {
     }
   };
 
+  const importImage = () => {
+    const imageUrl = prompt('Please enter the image URL:');
+    if (imageUrl) {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.src = imageUrl;
+      img.onload = () => {
+        const canvas = document.querySelector('.canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.onerror = (e) => {
+        alert('Failed to load image. Please check the URL and try again.');
+        console.error(e);
+        importImage();
+      };
+    }
+  };
+
   return (
     <div className="App">
       <TopBar
@@ -250,6 +269,7 @@ const CanvasDrawing = () => {
         clearCanvas={() => clearCanvas(socket, roomName)}
         downloadDrawing={downloadDrawing}
         users={users}
+        importImage={importImage}
       />
       <ToolBar
         tools={tools}

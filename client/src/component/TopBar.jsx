@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { Button, Menu, MenuItem } from '@mui/material';
 
-const TopBar = ({ saveDrawing, loadDrawing, clearSavedDrawing, clearCanvas, downloadDrawing, users }) => {
+const TopBar = ({ 
+  saveDrawing, 
+  loadDrawing, 
+  clearSavedDrawing, 
+  clearCanvas, 
+  downloadDrawing,
+  importImage, 
+  users 
+}) => {
   const [fileMenuAnchorEl, setFileMenuAnchorEl] = useState(null);
   const [usersMenuAnchorEl, setUsersMenuAnchorEl] = useState(null);
 
@@ -46,6 +54,7 @@ const TopBar = ({ saveDrawing, loadDrawing, clearSavedDrawing, clearCanvas, down
         <MenuItem onClick={clearSavedDrawing}>Delete</MenuItem>
         <MenuItem onClick={clearCanvas}>Clear</MenuItem>
         <MenuItem onClick={downloadDrawing}>Download</MenuItem>
+        <MenuItem onClick={importImage}>Import</MenuItem>
       </Menu>
 
       {/* Users Menu */}
