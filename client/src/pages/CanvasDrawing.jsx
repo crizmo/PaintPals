@@ -241,24 +241,40 @@ const CanvasDrawing = () => {
     }
   };
 
+  useEffect(() => {
+    if (socket) {
+      socket.on('imageImported', ({ imageUrl }) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = imageUrl;
+        img.onload = () => {
+          const canvas = document.querySelector('.canvas');
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.onerror = (e) => {
+          alert('Failed to load image. Please check the URL and try again.');
+          console.error(e);
+        };
+      });
+    }
+  
+    return () => {
+      if (socket) {
+        socket.off('imageImported');
+      }
+    };
+  }, [socket]);
+
   const importImage = () => {
     const imageUrl = prompt('Please enter the image URL:');
     if (imageUrl) {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.src = imageUrl;
-      img.onload = () => {
-        const canvas = document.querySelector('.canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      };
-      img.onerror = (e) => {
-        alert('Failed to load image. Please check the URL and try again.');
-        console.error(e);
-        importImage();
-      };
+      if (socket) {
+        socket.emit('importImage', { roomName, imageUrl });
+      }
     }
   };
+  
 
   return (
     <div className="App">

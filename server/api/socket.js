@@ -117,6 +117,10 @@ const ioHandler = (server) => {
             console.log("clearing drawing in room: ", roomName);
         });
 
+        socket.on('importImage', ({ roomName, imageUrl }) => {
+            io.to(roomName).emit('imageImported', { imageUrl });
+        });
+
         socket.on('disconnect', () => {
             console.log('user disconnected');
 
