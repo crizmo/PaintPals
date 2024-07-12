@@ -105,7 +105,7 @@ const RoomSetup = ({ name, setName, roomName, setRoomName, password, setPassword
           >
             Welcome to PaintPals
           </Typography>
-          <Typography variant="h5" gutterBottom sx={{ color: '#ffecb3', mb: 3 }}>
+          <Typography variant="h5" gutterBottom sx={{ color: '#ff3e43', mb: 3 }}>
             A collaborative, multiplayer drawing application inspired by MS Paint.
           </Typography>
           <Typography variant="body1" sx={{ my: 2, color: 'black' }}>
