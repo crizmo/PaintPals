@@ -11,10 +11,27 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
 
+        const getOffset = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    offsetX: e.touches[0].clientX - rect.left,
+                    offsetY: e.touches[0].clientY - rect.top,
+                };
+            } else {
+                return {
+                    offsetX: e.offsetX,
+                    offsetY: e.offsetY,
+                };
+            }
+        };
+
         const startDrawing = (e) => {
+            e.preventDefault();
+            const { offsetX, offsetY } = getOffset(e);
             setIsDrawing(true);
-            setStartX(e.offsetX);
-            setStartY(e.offsetY);
+            setStartX(offsetX);
+            setStartY(offsetY);
 
             if (tool === 'line' || tool === 'rectangle' || tool === 'circle') {
                 setSavedImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
@@ -22,10 +39,12 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
         };
 
         const draw = (e) => {
+            e.preventDefault();
             if (!isDrawing) return;
 
-            const x1 = e.offsetX;
-            const y1 = e.offsetY;
+            const { offsetX, offsetY } = getOffset(e);
+            const x1 = offsetX;
+            const y1 = offsetY;
 
             if (tool === 'brush' || tool === 'eraser') {
                 ctx.lineCap = 'round';
@@ -76,27 +95,41 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
         };
 
         const endDrawing = (e) => {
+            e.preventDefault();
             if (!isDrawing) return;
             setIsDrawing(false);
 
-            const x1 = e.offsetX;
-            const y1 = e.offsetY;
+            const { offsetX, offsetY } = getOffset(e);
+            const x1 = offsetX;
+            const y1 = offsetY;
 
-            if (( tool === 'line' || tool === 'rectangle' || tool === 'circle') && socket) {
+            if ((tool === 'line' || tool === 'rectangle' || tool === 'circle') && socket) {
                 socket.emit('drawing', { x0: startX, y0: startY, x1, y1, color: brushColor, size: brushSize, tool, roomName });
             }
         };
 
+        // Mouse events
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', endDrawing);
         canvas.addEventListener('mouseout', endDrawing);
 
+        // Touch events
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', endDrawing, { passive: false });
+
         return () => {
+            // Mouse events
             canvas.removeEventListener('mousedown', startDrawing);
             canvas.removeEventListener('mousemove', draw);
             canvas.removeEventListener('mouseup', endDrawing);
             canvas.removeEventListener('mouseout', endDrawing);
+
+            // Touch events
+            canvas.removeEventListener('touchstart', startDrawing);
+            canvas.removeEventListener('touchmove', draw);
+            canvas.removeEventListener('touchend', endDrawing);
         };
     }, [brushColor, brushSize, socket, tool, roomName, isDrawing, startX, startY, savedImage]);
 
@@ -125,11 +158,21 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
         };
     }, []);
 
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        // Initial setup
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }, []);
+
     return (
         <canvas
             className='canvas'
             ref={canvasRef}
-            style={{ backgroundColor: 'white' }}
+            style={{ backgroundColor: 'white', touchAction: 'none' }}
         />
     );
 };

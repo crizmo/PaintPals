@@ -34,7 +34,7 @@ const CanvasDrawing = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000');
+    const newSocket = io('https://co-draw.onrender.com');
     setSocket(newSocket);
 
     let mainname = userName;
@@ -258,7 +258,7 @@ const CanvasDrawing = () => {
         };
       });
     }
-  
+
     return () => {
       if (socket) {
         socket.off('imageImported');
@@ -274,7 +274,7 @@ const CanvasDrawing = () => {
       }
     }
   };
-  
+
 
   return (
     <div className="App">
@@ -296,7 +296,7 @@ const CanvasDrawing = () => {
         setTool={setTool}
       />
       <div className="main-content">
-        <SideBar 
+        <SideBar
           users={users}
           tools={tools}
           brushSize={brushSize}
@@ -326,7 +326,7 @@ export default CanvasDrawing;
 const tools = [
   { name: 'Brush', icon: <Brush sx={{ fontSize: 20 }} />, action: 'brush' },
   { name: 'Eraser', icon: <Eraser sx={{ fontSize: 20 }} />, action: 'eraser' },
-  { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' }, 
+  { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' },
   { name: 'Fill', icon: <Fill sx={{ fontSize: 20 }} />, action: 'fill' },
   { name: 'Line', icon: <Line sx={{ fontSize: 20 }} />, action: 'line' },
   { name: 'Rectangle', icon: <Rectangle sx={{ fontSize: 20 }} />, action: 'rectangle' },
