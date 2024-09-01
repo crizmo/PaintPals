@@ -34,7 +34,7 @@ const CanvasDrawing = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('https://co-draw.onrender.com');
+    const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
     let mainname = userName;
@@ -168,6 +168,7 @@ const CanvasDrawing = () => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         data.forEach(({ x0, y0, x1, y1, color, size, tool }) => {
+          console.log('Drawing color:', color);
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
           ctx.lineWidth = size;
@@ -294,9 +295,12 @@ const CanvasDrawing = () => {
         brushColor={brushColor}
         setBrushColor={setBrushColor}
         setTool={setTool}
+        undoDrawing={undoDrawing}
+
+        userName={userName}
       />
       <div className="main-content">
-        <SideBar
+        {/* <SideBar
           users={users}
           tools={tools}
           brushSize={brushSize}
@@ -306,7 +310,7 @@ const CanvasDrawing = () => {
           setTool={setTool}
 
           undoDrawing={undoDrawing}
-        />
+        /> */}
         <div className="canvas-container">
           <Board
             roomName={roomName}
@@ -327,13 +331,9 @@ const tools = [
   { name: 'Brush', icon: <Brush sx={{ fontSize: 20 }} />, action: 'brush' },
   { name: 'Eraser', icon: <Eraser sx={{ fontSize: 20 }} />, action: 'eraser' },
   { name: 'Undo', icon: <Undo sx={{ fontSize: 20 }} />, action: 'undo' },
-  { name: 'Fill', icon: <Fill sx={{ fontSize: 20 }} />, action: 'fill' },
   { name: 'Line', icon: <Line sx={{ fontSize: 20 }} />, action: 'line' },
   { name: 'Rectangle', icon: <Rectangle sx={{ fontSize: 20 }} />, action: 'rectangle' },
   { name: 'Circle', icon: <Circle sx={{ fontSize: 20 }} />, action: 'circle' },
-  { name: 'Color Picker', icon: <Colorize sx={{ fontSize: 20 }} />, action: 'color-picker' },
-  { name: 'Text', icon: <TextFields sx={{ fontSize: 20 }} />, action: 'text' },
-  { name: 'Zoom', icon: <ZoomIn sx={{ fontSize: 20 }} />, action: 'zoom' },
 ];
 
 const saveDrawing = (socket, roomName) => {

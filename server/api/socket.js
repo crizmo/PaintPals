@@ -47,6 +47,7 @@ const ioHandler = (server) => {
 
         socket.on('drawing', (data) => {
             const { roomName, ...drawingData } = data;
+            console.log("drawing data: ", drawingData);
             socket.to(roomName).emit('drawing', drawingData);
 
             // Update the current drawing state for the room

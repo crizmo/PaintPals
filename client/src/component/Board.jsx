@@ -75,16 +75,19 @@ const Board = ({ brushColor, brushSize, roomName, tool, socket }) => {
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(x1, y1);
-                ctx.stroke();
+                ctx.stroke();   
+                ctx.strokeStyle = brushColor;
                 ctx.closePath();
             } else if (tool === 'rectangle') {
                 ctx.putImageData(savedImage, 0, 0);
                 ctx.lineWidth = brushSize;
+                ctx.strokeStyle = brushColor;
                 const width = x1 - startX;
                 const height = y1 - startY;
                 ctx.strokeRect(startX, startY, width, height);
             } else if (tool === 'circle') {
                 ctx.putImageData(savedImage, 0, 0);
+                ctx.strokeStyle = brushColor;
                 ctx.lineWidth = brushSize;
                 const radius = Math.sqrt(Math.pow(x1 - startX, 2) + Math.pow(y1 - startY, 2));
                 ctx.beginPath();
