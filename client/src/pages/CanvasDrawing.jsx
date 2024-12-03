@@ -3,21 +3,12 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import TopBar from '../component/TopBar';
 import ToolBar from '../component/ToolBar';
-import SideBar from '../component/SideBar';
 import Board from '../component/Board';
 import '../App.css';
 
 import {
   Brush,
-  Delete,
-  Save,
-  CloudDownload,
-  CachedOutlined as Clear,
   GradientOutlined as Eraser,
-  FormatColorFill as Fill,
-  Colorize,
-  TextFields,
-  ZoomIn,
   Undo,
   LinearScaleOutlined as Line,
   RectangleOutlined as Rectangle,
@@ -300,17 +291,6 @@ const CanvasDrawing = () => {
         userName={userName}
       />
       <div className="main-content">
-        {/* <SideBar
-          users={users}
-          tools={tools}
-          brushSize={brushSize}
-          setBrushSize={setBrushSize}
-          brushColor={brushColor}
-          setBrushColor={setBrushColor}
-          setTool={setTool}
-
-          undoDrawing={undoDrawing}
-        /> */}
         <div className="canvas-container">
           <Board
             roomName={roomName}
