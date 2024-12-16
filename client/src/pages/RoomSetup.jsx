@@ -181,12 +181,6 @@ const RoomSetup = ({ name, setName, roomName, setRoomName, password, setPassword
             </SectionText>
             <SectionImage src="https://via.placeholder.com/350" alt="Example Image 2" />
           </Section>
-
-          <Footer>
-            <Typography variant="body2">
-              © 2024 PaintPals. All rights reserved.
-            </Typography>
-          </Footer>
         </Container>
       </ScrollContainer>
     </BackgroundImage>
